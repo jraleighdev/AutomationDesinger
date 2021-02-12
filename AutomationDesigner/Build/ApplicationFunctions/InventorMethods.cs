@@ -1,5 +1,6 @@
 ﻿using AutomationDesinger.Enums;
 using AutomationDesinger.Helpers;
+using AutomationDesinger.Logs;
 using InventorWrapper;
 using InventorWrapper.CopyTools;
 using InventorWrapper.Documents;
@@ -21,21 +22,13 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 {
     public class InventorMethods
     {
-        public List<string> Logs { get; set; }
-
-        public InventorMethods()
-        {
-            Logs = new List<string>();
-        }
-
-
         public void SetParameter(InventorDocument document, string paramName, string value)
         {
             var parameter = document.Parameters.FirstOrDefault(x => x.Name == paramName);
 
             if (parameter == null)
             {
-                Logs.Add($"Could not find parameter {paramName} in {document.Name}");
+                LogManager.Add($"Could not find parameter {paramName} in {document.Name}");
                 return;
             }
 
@@ -60,7 +53,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (parameter == null)
             {
-                Logs.Add($"Could not find parameter {paramName} in {workingDocument.Name}");
+                LogManager.Add($"Could not find parameter {paramName} in {workingDocument.Name}");
                 return "Not Found";
             }
 
@@ -101,7 +94,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -126,7 +119,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (string.IsNullOrEmpty(value))
             {
-                Logs.Add($"Could not find property {propertyName} in {document.Name}");
+                LogManager.Add($"Could not find property {propertyName} in {document.Name}");
             }
 
             return value;
@@ -161,7 +154,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -268,7 +261,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -280,7 +273,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
     }

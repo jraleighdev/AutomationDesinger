@@ -16,6 +16,7 @@ using AutomationDesinger.Enums;
 using AutomationDesinger.Helpers;
 using Microsoft.VisualStudio.Tools.Applications.Runtime;
 using InventorWrapper.Representation;
+using AutomationDesinger.Logs;
 
 namespace AutomationDesinger.Build
 {
@@ -37,7 +38,7 @@ namespace AutomationDesinger.Build
         private InventorMethods _methods;
 
         /// <summary>
-        /// If the appliction is currently in a repeat block
+        /// If the application is currently in a repeat block
         /// </summary>
         private bool inRepeat = false;
 
@@ -68,7 +69,7 @@ namespace AutomationDesinger.Build
         /// <param name="rangeName"></param>
         /// <param name="rangeParameter"></param>
         /// <returns></returns>
-        public List<string> Run(string rangeName = "", string rangeParameter = "")
+        public void Run(string rangeName = "", string rangeParameter = "")
         {
             // The start cell
             Excel.Range startCell = null;
@@ -100,7 +101,7 @@ namespace AutomationDesinger.Build
             // Secondary value for some commands
             var value2 = value + 1;
 
-            // Set the start orw
+            // Set the start row
             var i = startCell.Row + 1;
 
             // loop while the command column is not null
@@ -146,7 +147,7 @@ namespace AutomationDesinger.Build
 
                         if (_workingDocument == null)
                         {
-                            Logs.Add($"Could not find document {workingDocumentName}. If all occurences are suppressed you can ignore this error.");
+                            LogManager.Add($"Could not find document {workingDocumentName}. If all occurrences are suppressed you can ignore this error.");
                             i++;
                             continue;
                         }
@@ -161,7 +162,7 @@ namespace AutomationDesinger.Build
 
                         if (_workingDocument == null)
                         {
-                            Logs.Add($"Could not find document {workingDocumentName}. If all occurences are suppressed you can ignore this error.");
+                            LogManager.Add($"Could not find document {workingDocumentName}. If all occurrences are suppressed you can ignore this error.");
                             i++;
                             continue;
                         }
@@ -239,8 +240,6 @@ namespace AutomationDesinger.Build
                         }
 
                         runBlock.Run(subName, GetString(i, value));
-
-                        Logs.AddRange(runBlock.Logs);
                         break;
                     case Commands.If:
                         ValidateIf(i, typeCol);
@@ -301,10 +300,6 @@ namespace AutomationDesinger.Build
             InventorApplication.ActiveDocument.Update();
 
             InventorApplication.ActiveDocument.Save();
-
-            Logs.AddRange(_methods.Logs);
-
-            return Logs;
         }
     }
 }

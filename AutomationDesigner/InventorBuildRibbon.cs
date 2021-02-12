@@ -24,6 +24,7 @@ using SolidworksWrapper;
 using SolidworksWrapper.Enums;
 using SolidworksWrapper.CopyTools;
 using AutomationDesinger.Forms.DrawingCapture;
+using AutomationDesinger.Logs;
 
 namespace AutomationDesinger
 {
@@ -49,11 +50,11 @@ namespace AutomationDesinger
 
             try
             {
-                var logs = _processInventor.Run();
+                _processInventor.Run();
 
-                if (logs.Count > 0)
+                if (LogManager.HasData)
                 {
-                    WriteLogs(logs);
+                    LogManager.WriteLogs(Globals.ThisAddIn.Application.ActiveWorkbook);
 
                     MessageBox.Show("Done", "Application Complete - Please Review Logs", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
@@ -68,6 +69,7 @@ namespace AutomationDesinger
             }
             finally
             {
+                LogManager.Clear();
                 InventorStopButton.Enabled = false;
             }
         }
@@ -261,11 +263,11 @@ namespace AutomationDesinger
 
             try
             {
-                var logs = _processSolidworks.Run(true);
+                _processSolidworks.Run(true);
 
-                if (logs.Count > 0)
+                if (LogManager.HasData)
                 {
-                    WriteLogs(logs);
+                    LogManager.WriteLogs(Globals.ThisAddIn.Application.ActiveWorkbook);
 
                     MessageBox.Show("Done", "Application Complete - Please Review Logs", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
@@ -593,66 +595,38 @@ namespace AutomationDesinger
         {
             return new List<CommandItem>
             {
-                new CommandItem(Commands.Dimension, "Name of the dimesion followed by the sketch or feature name example \"Dim1@Sketch1\"", ConstantStrings.ParentText, "Value to set the dimension", applicationType: ApplicationTypeEnum.Solidworks),
+                new CommandItem(Commands.Dimension, "Name of the dimension followed by the sketch or feature name example \"Dim1@Sketch1\"", ConstantStrings.ParentText, "Value to set the dimension", applicationType: ApplicationTypeEnum.Solidworks),
                 new CommandItem(Commands.Equation, "Name of the equation", ConstantStrings.ParentText, "Value to set the equation", notes: "Units Ul, In, MM, CM, M, or test", applicationType: ApplicationTypeEnum.Solidworks),
                 new CommandItem(Commands.Parameter, "Name of Parameter", ConstantStrings.ParentText, "Value to set parameter", "Not Used", "Either UL(Unitless), In, MM, CM, M or text", "", ApplicationTypeEnum.Inventor),
                 new CommandItem(Commands.GetParameter, "Name of Parameter", ConstantStrings.ParentText, "Application will set the value of the parameter here", "Not Used", "Either UL(Unitless), In, MM, CM, M or text", "", ApplicationTypeEnum.Inventor),
-                new CommandItem(Commands.ComponentActivity, "Name of component in the tree followed by occurence number", ConstantStrings.ParentText, ConstantStrings.SuppressionText),
+                new CommandItem(Commands.ComponentActivity, "Name of component in the tree followed by occurrence number", ConstantStrings.ParentText, ConstantStrings.SuppressionText),
                 new CommandItem(Commands.ConstraintActivity, "Name of constraint", ConstantStrings.ParentText, ConstantStrings.SuppressionText),
                 new CommandItem(Commands.PatternActivity, "Name of pattern", ConstantStrings.ParentText, ConstantStrings.SuppressionText),
-                new CommandItem(Commands.PlaceComponent, "File location of document", ConstantStrings.ParentText, "Application will set the occurence name of the part here"),
+                new CommandItem(Commands.PlaceComponent, "File location of document", ConstantStrings.ParentText, "Application will set the occurrence name of the part here"),
                 new CommandItem(Commands.Stop, "Stops the application", "", ""),
                 new CommandItem(Commands.TopLevelName, "Name of the top level document", "", ""),
                 new CommandItem(Commands.FeatureActivity, "Name of the feature", ConstantStrings.ParentText, ConstantStrings.SuppressionText),
-                new CommandItem(Commands.DeleteComponent, "Name of component in the tree followed by occurence number", ConstantStrings.ParentText, ""),
+                new CommandItem(Commands.DeleteComponent, "Name of component in the tree followed by occurrence number", ConstantStrings.ParentText, ""),
                 new CommandItem(Commands.DeleteReferencedDocuments, "Name of the document", ConstantStrings.ParentText, "", "", "", "Deletes all components in the parent document that reference the given document"),
-                new CommandItem(Commands.ReplaceComponent, "Name of component in the tree followed by occurence number", ConstantStrings.ParentText, "File location of document to replace the component with"),
+                new CommandItem(Commands.ReplaceComponent, "Name of component in the tree followed by occurrence number", ConstantStrings.ParentText, "File location of document to replace the component with"),
                 new CommandItem(Commands.Sub, "Name of the named range to run", "Name of the range to set the parameter in", "Value of the parameter to be set"),
                 new CommandItem(Commands.If, "", "", "Boolean value to process the lines inside the block if true then the values will be processed if not then it will be skipped", "", "", "Must be followed by a End if"),
                 new CommandItem(Commands.EndIf, "", "", "", "", "", "If the condition is false for the matching if the program will skip down the matching end if"),
-                new CommandItem(Commands.Repeat, "", "", "Enter the number of times to repeat", "The current value of the repeat", "", "Must be followed with a end repreat"),
+                new CommandItem(Commands.Repeat, "", "", "Enter the number of times to repeat", "The current value of the repeat", "", "Must be followed with a end repeat"),
                 new CommandItem(Commands.EndRepeat, "", "", "", "", "", "Values in between repeat and end repeat will occur until index matches the count number"),
                 new CommandItem(Commands.Comment, "", "", "", "", "", "No cells are processed for user comments"),
                 new CommandItem(Commands.SetProperty, "Name of the property", ConstantStrings.ParentText, "Value to set the property"),
                 new CommandItem(Commands.GetProperty, "Name of the property", ConstantStrings.ParentText, "Application will set the value of the property here"),
                 new CommandItem(Commands.SetLevelOfDetail, "Name of the Level Detail", ConstantStrings.ParentText, "", "", "", "Activates the level detail and creates it if not does not exist", applicationType: ApplicationTypeEnum.Inventor),
-                new CommandItem(Commands.SetDesignViewRep, "Name of the Design View Reprensenation", ConstantStrings.ParentText, "", "", "", "Activates the Design View and creates it if not does not exist", applicationType: ApplicationTypeEnum.Inventor),
-                new CommandItem(Commands.ComponentVisiblity, "Name of component in the tree followed by occurence number", ConstantStrings.ParentText, "True or False if the component is visible"),
+                new CommandItem(Commands.SetDesignViewRep, "Name of the Design View Representation", ConstantStrings.ParentText, "", "", "", "Activates the Design View and creates it if not does not exist", applicationType: ApplicationTypeEnum.Inventor),
+                new CommandItem(Commands.ComponentVisiblity, "Name of component in the tree followed by occurrence number", ConstantStrings.ParentText, "True or False if the component is visible"),
                 new CommandItem(Commands.DocumentReferenceVisiblity, "Name of document in the active assembly", ConstantStrings.ParentText, "True or False if the component is visible", "", "", "Sets the visibllity of the all the occurences that reference this document"),
                 new CommandItem(Commands.UpdateDocument, "", "", "", "", "", "Updates and saves the active document"),
                 new CommandItem(Commands.ShowConfiguration, "Name of configuration to show", ConstantStrings.ParentText, "", applicationType: ApplicationTypeEnum.Solidworks),
                 new CommandItem(Commands.SetComponentConfiguration, "Name of the component to set the configuration on", ConstantStrings.ParentText, "Name of the configuration to set on the component", applicationType: ApplicationTypeEnum.Solidworks),
                 new CommandItem(Commands.SetWeldmentConfiguration, "Name of the weldment member to set the configuration on", ConstantStrings.ParentText, "Name of the configuration to set on the weldment feature", applicationType: ApplicationTypeEnum.Solidworks),
-                 new CommandItem(Commands.OpenDocument, "Name of Document", "Enter the a source document if you want the application to copy source if the requested document does not exist", "Enter text to find in the source delimited by commas", "Enter text to replace with in the source delmited by commas", "", "The Search and replace test is matched by location so if source path is C:\\Blue\\Green\\Yellow and search contains \"Blue, Green, Yellow \" then relace \"Yellow, Blue, Green \" the new source will be C:\\Yellow\\Blue\\Green"),
+                 new CommandItem(Commands.OpenDocument, "Name of Document", "Enter the a source document if you want the application to copy source if the requested document does not exist", "Enter text to find in the source delimited by commas", "Enter text to replace with in the source delimited by commas", "", "The Search and replace test is matched by location so if source path is C:\\Blue\\Green\\Yellow and search contains \"Blue, Green, Yellow \" then replace \"Yellow, Blue, Green \" the new source will be C:\\Yellow\\Blue\\Green"),
             };
-        }
-
-        private void WriteLogs(List<string> logs)
-        {
-            Excel.Workbook workbook = Globals.ThisAddIn.Application.ActiveWorkbook;
-
-            workbook.Worksheets.Add();
-
-            var workSheet = workbook.ActiveSheet as Excel.Worksheet;
-
-            var logSheets = workbook.GetWorksheets().Where(x => x.Name.ToUpper().Contains("LOGS"));
-
-            if (logSheets == null || logSheets.Count() == 0)
-            {
-                workSheet.Name = "Logs 1";
-            }
-            else
-            {
-                workSheet.Name = "Logs " + logSheets.Count() + 1;
-            }
-
-            var i = 1;
-
-            foreach (var l in logs)
-            {
-                workSheet.Range[$"A{i}"].Value = l;
-                i++;
-            }
         }
 
         #endregion

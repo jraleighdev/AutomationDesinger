@@ -271,6 +271,10 @@
     <Compile Include="Helpers\ExcelHelpers.cs" />
     <Compile Include="Helpers\FractionConverter.cs" />
     <Compile Include="Helpers\SolidworksFormatters.cs" />
+    <Compile Include="Logs\LogData.cs" />
+    <Compile Include="Logs\LogManager.cs" />
+    <Compile Include="Logs\LogTypes.cs" />
+    <Compile Include="Logs\LogWriter.cs" />
     <Compile Include="Models\FilePathContains.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

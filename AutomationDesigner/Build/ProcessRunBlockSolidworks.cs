@@ -42,7 +42,7 @@ namespace AutomationDesinger.Build
             _methods = new SolidworksMethods();
         }
 
-        public List<string> Run(bool startMethod, string rangeName = "", string subRangeName = "", string subRangeValue = "")
+        public void Run(bool startMethod, string rangeName = "", string subRangeName = "", string subRangeValue = "")
         {
             Excel.Range startCell = null;
 
@@ -282,8 +282,6 @@ namespace AutomationDesinger.Build
 
                 SolidworksApplication.ActiveDocument.Save();
             }
-
-            return _methods.Logs;
         }
     }
 }

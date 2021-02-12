@@ -1,4 +1,5 @@
 ﻿using AutomationDesinger.Enums;
+using AutomationDesinger.Logs;
 using SolidworksWrapper;
 using SolidworksWrapper.Constants;
 using SolidworksWrapper.Documents;
@@ -14,13 +15,6 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 {
     public class SolidworksMethods
     {
-        public List<string> Logs { get; set; }
-
-        public SolidworksMethods()
-        {
-            Logs = new List<string>();
-        }
-
         public void Test()
         {
             var doc = SolidworksApplication.ActiveDocument;
@@ -34,7 +28,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (dim == null)
             {
-                Logs.Add($"Could not find dimension {name} in {workingDocument.Name}");
+                LogManager.Add($"Could not find dimension {name} in {workingDocument.Name}");
                 return;
             }
 
@@ -59,7 +53,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
                                                                                            configuration);
             if (!success)
             {
-                Logs.Add($"Could not set dim {name} in {workingDocument.Name}");
+                LogManager.Add($"Could not set dim {name} in {workingDocument.Name}");
             }
         }
 
@@ -69,7 +63,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (dim == null)
             {
-                Logs.Add($"Could not find dimension {name} in {workingDocument.Name}");
+                LogManager.Add($"Could not find dimension {name} in {workingDocument.Name}");
                 return "";
             }
 
@@ -105,7 +99,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (equation == null)
             {
-                Logs.Add($"Could not find equation {name} in {workingDocument.Name}");
+                LogManager.Add($"Could not find equation {name} in {workingDocument.Name}");
             }
 
             return equation == null ? "" : equation.Value.ToString();
@@ -141,7 +135,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -189,7 +183,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -201,7 +195,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (document.SelectedCount() != 1)
             {
-                Logs.Add($"Could not find {componentName} in {document.Name}");
+                LogManager.Add($"Could not find {componentName} in {document.Name}");
                 return;
             }
 
@@ -221,7 +215,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
         }
 
@@ -264,7 +258,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             catch (Exception ex)
             {
-                Logs.Add(ex.Message);
+                LogManager.Add(ex.Message);
             }
 
             return value;
@@ -278,7 +272,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             else
             {
-                Logs.Add($"{configurationName} does not exist in document {document.Name}");
+                LogManager.Add($"{configurationName} does not exist in document {document.Name}");
             }
         }
 
@@ -290,7 +284,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
 
             if (document.SelectedCount() != 1)
             {
-                Logs.Add($"Could not find {featurename} in {document.Name}");
+                LogManager.Add($"Could not find {featurename} in {document.Name}");
                 return;
             }
 
@@ -302,7 +296,7 @@ namespace AutomationDesinger.Build.ApplicationFunctions
             }
             else
             {
-                Logs.Add($"Feature {featurename} in {document.Name} is not a weldment member");
+                LogManager.Add($"Feature {featurename} in {document.Name} is not a weldment member");
                 return;
             }
 

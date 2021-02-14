@@ -13,6 +13,7 @@ namespace AutomationDesinger
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Environment.GetEnvironmentVariable("SyncFusionLiscenceKey", EnvironmentVariableTarget.User));
             // get the intial units from the settings from 
             SolidworksWrapper.General.UnitManager.UnitTypes = (SolidworksWrapper.General.UnitTypes)Settings.Default.SelectedUnits;
             InventorWrapper.General.UnitManager.LengthUnits = (InventorWrapper.General.LengthUnits)Settings.Default.SelectedUnits;
